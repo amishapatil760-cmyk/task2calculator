@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Level 1 Calculator</title>
+<style>
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+  }
+
+  .calculator {
+    background-color: #222;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  }
+
+  .display {
+    background-color: #bd3953;
+    color: rgb(89, 214, 195);
+    font-size: 32px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: right;
+    margin-bottom: 15px;
+    min-width: 220px;
+    overflow-x: auto;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 60px);
+    grid-gap: 10px;
+  }
+
+  .buttons button {
+    padding: 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 5px;
+    background-color: #de8282;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .buttons button:hover {
+    background-color: #e38686;
+  }
+
+  .operator {
+    background-color: #ff9500;
+    color: white;
+  }
+
+  .operator:hover {
+    background-color: #ffa733;
+  }
+
+  .span-two {
+    grid-column: span 2;
+  }
+</style>
+</head>
+<body>
+
+<div class="calculator">
+  <div class="display" id="display">0</div>
+  <div class="buttons">
+    <button class="operator" id="clear">C</button>
+    <button class="operator" id="delete">⌫</button>
+    <button class="operator" id="/">÷</button>
+    <button class="operator" id="*">×</button>
+
+    <button>7</button>
+    <button>8</button>
+    <button>9</button>
+    <button class="operator" id="-">-</button>
+
+    <button>4</button>
+    <button>5</button>
+    <button>6</button>
+    <button class="operator" id="+">+</button>
+
+    <button>1</button>
+    <button>2</button>
+    <button>3</button>
+    <button class="operator" id="equals">=</button>
+
+    <button class="span-two">0</button>
+    <button>.</button>
+  </div>
+</div>
+
+<script>
+  const display = document.getElementById('display');
+  const buttons = document.querySelectorAll('.buttons button');
+
+  let currentInput = '';
+  let resultDisplayed = false;
+
+  buttons.forEach(button => {
+    button.addEventListener('click', () => {
+      const value = button.textContent;
+
+      // Clear display
+      if (button.id === 'clear') {
+        currentInput = '';
+        display.textContent = '0';
+        resultDisplayed = false;
+        return;
+      }
+
+      // Delete last character
+      if (button.id === 'delete') {
+        currentInput = currentInput.slice(0, -1);
+        display.textContent = currentInput || '0';
+        return;
+      }
+
+      // Calculate result
+      if (button.id === 'equals') {
+        try {
+          // Replace × and ÷ symbols with JS operators
+          const expression = currentInput.replace(/×/g, '*').replace(/÷/g, '/');
+          currentInput = eval(expression).toString();
+          display.textContent = currentInput;
+          resultDisplayed = true;
+        } catch {
+          display.textContent = 'Error';
+          currentInput = '';
+        }
+        return;
+      }
+
+      // Prevent multiple operators at start
+      if (['+', '-', '*', '/'].includes(value) && currentInput === '') return;
+
+      // If last char is operator and user clicks another operator, replace it
+      const lastChar = currentInput.slice(-1);
+      if (['+', '-', '', '/'].includes(lastChar) && ['+', '-', '', '/'].includes(value)) {
+        currentInput = currentInput.slice(0, -1);
+      }
+
+      currentInput += value;
+      display.textContent = currentInput;
+    });
+  });
+</script>
+
+</body>
+</html>
